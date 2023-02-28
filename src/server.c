@@ -27,7 +27,6 @@ void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
         if (bytes_received > 0) {
           printf("%s \n", buffer);
           broadcastData(i, client_socket_list, buffer);
-          break;
         }
       }
     }
