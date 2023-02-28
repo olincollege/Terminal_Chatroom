@@ -9,9 +9,16 @@
 #define MAX_CLIENTS 5
 #define MAX_MESSAGE_LENGTH 1024
 
+void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
+                   char buffer[MAX_MESSAGE_LENGTH]) {
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (i != senderIdx && client_socket_list[i] != 0) {
+      write(client_socket_list[i], buffer, MAX_MESSAGE_LENGTH);
+    }
+  }
+}
 void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
   char buffer[MAX_MESSAGE_LENGTH];
-  // bzero(buffer, MAX_MESSAGE_LENGTH);
   for (int i = 0; i < MAX_CLIENTS; i++) {
     if (client_socket_list[i] != 0) {
       if (FD_ISSET(client_socket_list[i], current_socket)) {
@@ -19,6 +26,8 @@ void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
             recv(client_socket_list[i], buffer, sizeof(buffer), 0);
         if (bytes_received > 0) {
           printf("%s \n", buffer);
+          broadcastData(i, client_socket_list, buffer);
+          break;
         }
       }
     }
