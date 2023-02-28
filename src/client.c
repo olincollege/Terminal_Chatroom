@@ -30,9 +30,9 @@ int main() {
   } else {
     perror("Connection Succeeded");
   }
-
-  char server_response[256];
-  recv(sockfd, &server_response, sizeof(server_response), 0);
-  printf(server_response);
+  while (1) {
+    const char *test = "hoho";
+    write(sockfd, test, sizeof(test));
+  }
   return 0;
 }
