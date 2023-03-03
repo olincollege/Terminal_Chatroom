@@ -6,13 +6,18 @@
 #include <string.h>
 
 void get_username(char* username) {
-    char usernamebuffer[USERNAME_BUFFER_SIZE + 1];
-    fgets(usernamebuffer, USERNAME_BUFFER_SIZE + 1, stdin);
-    if (strlen(usernamebuffer) >= 16) {
-        printf("Error: Username is over 16 characters");
-    } else {
-        strncpy(username, usernamebuffer, USERNAME_BUFFER_SIZE + 1);  
-    } 
+    while(1) {
+        printf("Enter a username: ");
+        fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
+        if (strlen(username) > USERNAME_BUFFER_SIZE) {
+            printf("Error: Username is over 16 characters");
+            fflush(stdin);
+            continue;
+        } else {
+            username[strcspn(username, "\n")] = 0;
+            break;
+        } 
+    }
 }
 
 void get_timestamp(char* timestamp) {

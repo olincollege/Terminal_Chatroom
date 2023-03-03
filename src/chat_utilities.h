@@ -16,6 +16,7 @@ enum {
 /**
  * Asks the user for their username and returns it.
  *
+ * @param username A username.
  * @return A string representing the user's username.
  */
 void get_username(char*);
