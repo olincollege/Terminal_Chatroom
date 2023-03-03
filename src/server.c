@@ -17,8 +17,10 @@ void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
     }
   }
 }
+
 void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
   char buffer[MAX_MESSAGE_LENGTH];
+  int messages_received = 0;
   for (int i = 0; i < MAX_CLIENTS; i++) {
     if (client_socket_list[i] != 0) {
       if (FD_ISSET(client_socket_list[i], current_socket)) {
@@ -27,9 +29,13 @@ void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
         if (bytes_received > 0) {
           printf("%s \n", buffer);
           broadcastData(i, client_socket_list, buffer);
+          messages_received = 1;
         }
       }
     }
+  }
+  if (!messages_received) {
+    printf("No messages received\n");
   }
 }
 int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
@@ -40,7 +46,7 @@ int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
     for (int i = 0; i < MAX_CLIENTS; i++) {
       if (client_socket_list[i] == 0) {
         client_socket_list[i] = client;
-        perror("Client Connection: ");
+        perror("Client Connection");
         printf("New Client Joined \n");
         return client;
       }
@@ -50,6 +56,9 @@ int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
 }
 
 int main() {
+  struct timeval tv;
+  tv.tv_sec = 1;
+  tv.tv_usec = 0;
   fd_set current_sockets;
   int client_socket_list[MAX_CLIENTS] = {
       0,
@@ -89,7 +98,7 @@ int main() {
         FD_SET(client_socket_list[i], &current_sockets);
       }
     }
-    int select_status = select(MAX_CLIENTS, &current_sockets, NULL, NULL, NULL);
+    int select_status = select(MAX_CLIENTS, &current_sockets, NULL, NULL, &tv);
     if (select_status < 0) {
       perror("Error With Selecting");
     } else if (select_status != 0) {

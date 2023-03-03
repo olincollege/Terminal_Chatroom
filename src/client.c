@@ -33,7 +33,12 @@ int main() {
   }
 
   char buffer[1024];
-  while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+  while (1) {
+    printf("> ");
+    fgets(buffer, sizeof(buffer), stdin);
+    if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
+      buffer[strlen(buffer) - 1] = '\0';
+    }
     if (write(sockfd, buffer, strlen(buffer)) == -1) {
       perror("Write Failed");
       exit(EXIT_FAILURE);
@@ -47,7 +52,7 @@ int main() {
       break;
     } else {
       buffer[bytes_received] = '\0';
-      printf("%s", buffer);
+      printf("%s\n", buffer);
     }
   }
 
