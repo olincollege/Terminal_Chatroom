@@ -6,18 +6,9 @@
 #include <string.h>
 
 void get_username(char* username) {
-    while(1) {
-        printf("Enter a username: ");
-        fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
-        if (strlen(username) > USERNAME_BUFFER_SIZE) {
-            printf("Error: Username is over 16 characters");
-            fflush(stdin);
-            continue;
-        } else {
-            username[strcspn(username, "\n")] = 0;
-            break;
-        } 
-    }
+    printf("Enter a username: ");
+    fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
+    username[strcspn(username, "\n")] = 0;
 }
 
 void get_timestamp(char* timestamp) {
@@ -26,12 +17,20 @@ void get_timestamp(char* timestamp) {
     strncpy(timestamp, timeinfo + 11, 8);  
 }
 
+void create_packet(char* packet, char* username, char* timestamp) {
+    strcat(packet, username);
+    strcat(packet, " (");
+    strcat(packet, timestamp);
+    strcat(packet, ")");
+}
+
 int main(void) {
     char username[USERNAME_BUFFER_SIZE + 1];
     get_username(username);
-    printf("%s", username);
     char timestamp[TIMESTAMP_BUFFER_SIZE + 1];
     get_timestamp(timestamp);
-    printf("%s", timestamp);
+    char packet[50] = "";
+    create_packet(packet, username, timestamp);
+    printf("%s", packet);
     return 0;
 }
