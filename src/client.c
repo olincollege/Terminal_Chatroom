@@ -27,12 +27,30 @@ int main() {
 
   if (connection_status != 0) {
     perror("Connection Failed");
+    exit(EXIT_FAILURE);
   } else {
     perror("Connection Succeeded");
   }
 
-  char server_response[256];
-  recv(sockfd, &server_response, sizeof(server_response), 0);
-  printf(server_response);
+  char buffer[1024];
+  while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+    if (write(sockfd, buffer, strlen(buffer)) == -1) {
+      perror("Write Failed");
+      exit(EXIT_FAILURE);
+    }
+    int bytes_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_received == -1) {
+      perror("Receive Failed");
+      exit(EXIT_FAILURE);
+    } else if (bytes_received == 0) {
+      printf("Connection Closed by Peer\n");
+      break;
+    } else {
+      buffer[bytes_received] = '\0';
+      printf("%s", buffer);
+    }
+  }
+
+  close(sockfd);
   return 0;
 }

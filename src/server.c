@@ -7,17 +7,41 @@
 #include <unistd.h>
 #define PORT 8080
 #define MAX_CLIENTS 5
+#define MAX_MESSAGE_LENGTH 1024
 
-int newClientConnection(int (*client_socket_list)[MAX_CLIENTS], int sockfd) {
+void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
+                   char buffer[MAX_MESSAGE_LENGTH]) {
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (i != senderIdx && client_socket_list[i] != 0) {
+      write(client_socket_list[i], buffer, MAX_MESSAGE_LENGTH);
+    }
+  }
+}
+void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
+  char buffer[MAX_MESSAGE_LENGTH];
+  for (int i = 0; i < MAX_CLIENTS; i++) {
+    if (client_socket_list[i] != 0) {
+      if (FD_ISSET(client_socket_list[i], current_socket)) {
+        int bytes_received =
+            recv(client_socket_list[i], buffer, sizeof(buffer), 0);
+        if (bytes_received > 0) {
+          printf("%s \n", buffer);
+          broadcastData(i, client_socket_list, buffer);
+        }
+      }
+    }
+  }
+}
+int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
   int client = accept(sockfd, NULL, NULL);
-
   if (client < 0) {
     perror("Client Connection Failed");
   } else {
     for (int i = 0; i < MAX_CLIENTS; i++) {
-      if (*client_socket_list[i] == 0) {
-        *client_socket_list[i] = client;
-        perror("Client Succeed");
+      if (client_socket_list[i] == 0) {
+        client_socket_list[i] = client;
+        perror("Client Connection: ");
+        printf("New Client Joined \n");
         return client;
       }
     }
@@ -61,7 +85,7 @@ int main() {
     FD_ZERO(&current_sockets);
     FD_SET(sockfd, &current_sockets);
     for (int i = 0; i < MAX_CLIENTS; i++) {
-      if (client_socket_list[i] > 0) {
+      if (client_socket_list[i] != 0) {
         FD_SET(client_socket_list[i], &current_sockets);
       }
     }
@@ -70,8 +94,9 @@ int main() {
       perror("Error With Selecting");
     } else if (select_status != 0) {
       if (FD_ISSET(sockfd, &current_sockets)) {
-        newClientConnection(&client_socket_list, sockfd);
+        newClientConnection(client_socket_list, sockfd);
       } else {
+        handleData(client_socket_list, &current_sockets);
       }
     }
   }
