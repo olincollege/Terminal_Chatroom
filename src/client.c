@@ -54,7 +54,6 @@ int main() {
     }
 
     if (FD_ISSET(sockfd, &temp_write)) {
-      printf("> ");
       fgets(buffer, sizeof(buffer), stdin);
       if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
         buffer[strlen(buffer) - 1] = '\0';
@@ -82,7 +81,6 @@ int main() {
     }
 
     if (FD_ISSET(STDIN_FILENO, &temp_read)) {
-      printf("> ");
       fgets(buffer, sizeof(buffer), stdin);
       if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
         buffer[strlen(buffer) - 1] = '\0';

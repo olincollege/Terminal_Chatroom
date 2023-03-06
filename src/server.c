@@ -19,6 +19,7 @@ void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
     }
   }
 }
+
 void handleData(int client_socket_list[MAX_CLIENTS], fd_set *read_socket,
                 fd_set *write_socket) {
   char buffer[MAX_MESSAGE_LENGTH];
@@ -42,7 +43,6 @@ void handleData(int client_socket_list[MAX_CLIENTS], fd_set *read_socket,
       }
     }
   }
-  FD_ZERO(read_socket);
 }
 
 int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
@@ -80,8 +80,6 @@ int main() {
   if (fcntl(sockfd, F_GETFL) & O_NONBLOCK) {
     perror("Already Non Blocking");
   }
-
-  // Put the socket in non-blocking mode:
   if (fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL) | O_NONBLOCK) < 0) {
     perror("Cannot Block");
   }
@@ -113,16 +111,11 @@ int main() {
     for (int i = 0; i < MAX_CLIENTS; i++) {
       if (client_socket_list[i] != 0) {
         FD_SET(client_socket_list[i], &read_socket);
+        FD_SET(client_socket_list[i], &write_socket);
       }
     }
-    write_socket = read_socket;
     int select_status =
-        select(MAX_CLIENTS, &read_socket, &write_socket, NULL, &tv);
-    for (int i = 0; i < MAX_CLIENTS; i++) {
-      if (client_socket_list[i] != 0) {
-        FD_SET(client_socket_list[i], &read_socket);
-      }
-    }
+        select(FD_SETSIZE, &read_socket, &write_socket, NULL, &tv);
     if (select_status < 0) {
       perror("Error With Selecting");
     } else if (select_status != 0) {
