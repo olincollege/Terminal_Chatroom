@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,33 +12,39 @@
 
 void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
                    char buffer[MAX_MESSAGE_LENGTH]) {
+  char bufferEmpty[MAX_MESSAGE_LENGTH];
   for (int i = 0; i < MAX_CLIENTS; i++) {
     if (i != senderIdx && client_socket_list[i] != 0) {
-      write(client_socket_list[i], buffer, MAX_MESSAGE_LENGTH);
+      write(client_socket_list[i], buffer, strlen(buffer));
     }
   }
 }
-
-void handleData(int client_socket_list[MAX_CLIENTS], fd_set *current_socket) {
+void handleData(int client_socket_list[MAX_CLIENTS], fd_set *read_socket,
+                fd_set *write_socket) {
   char buffer[MAX_MESSAGE_LENGTH];
-  int messages_received = 0;
   for (int i = 0; i < MAX_CLIENTS; i++) {
     if (client_socket_list[i] != 0) {
-      if (FD_ISSET(client_socket_list[i], current_socket)) {
+      if (FD_ISSET(client_socket_list[i], read_socket)) {
         int bytes_received =
             recv(client_socket_list[i], buffer, sizeof(buffer), 0);
         if (bytes_received > 0) {
+          buffer[bytes_received] = '\0';
           printf("%s \n", buffer);
           broadcastData(i, client_socket_list, buffer);
-          messages_received = 1;
+        } else if (bytes_received == 0) {
+          // Client has disconnected
+          printf("Client %d disconnected\n", client_socket_list[i]);
+          close(client_socket_list[i]);
+          client_socket_list[i] = 0;
+        } else {
+          perror("Receiving Failure");
         }
       }
     }
   }
-  if (!messages_received) {
-    printf("No messages received\n");
-  }
+  FD_ZERO(read_socket);
 }
+
 int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
   int client = accept(sockfd, NULL, NULL);
   if (client < 0) {
@@ -56,10 +63,10 @@ int newClientConnection(int client_socket_list[MAX_CLIENTS], int sockfd) {
 }
 
 int main() {
+  char buffer[MAX_MESSAGE_LENGTH];
   struct timeval tv;
-  tv.tv_sec = 1;
-  tv.tv_usec = 0;
-  fd_set current_sockets;
+
+  fd_set read_socket, write_socket;
   int client_socket_list[MAX_CLIENTS] = {
       0,
   };
@@ -70,7 +77,14 @@ int main() {
   } else {
     perror("Socket Creation Succeeded");
   }
+  if (fcntl(sockfd, F_GETFL) & O_NONBLOCK) {
+    perror("Already Non Blocking");
+  }
 
+  // Put the socket in non-blocking mode:
+  if (fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL) | O_NONBLOCK) < 0) {
+    perror("Cannot Block");
+  }
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
   server_address.sin_port = htons(PORT);
@@ -89,23 +103,33 @@ int main() {
     perror("Unable to Listen");
     exit(EXIT_FAILURE);
   }
-
   while (1) {
-    FD_ZERO(&current_sockets);
-    FD_SET(sockfd, &current_sockets);
+    tv.tv_sec = 0;
+    tv.tv_usec = 10000;
+    FD_ZERO(&read_socket);
+    FD_SET(sockfd, &read_socket);
+    FD_ZERO(&write_socket);
+    FD_SET(sockfd, &write_socket);
     for (int i = 0; i < MAX_CLIENTS; i++) {
       if (client_socket_list[i] != 0) {
-        FD_SET(client_socket_list[i], &current_sockets);
+        FD_SET(client_socket_list[i], &read_socket);
       }
     }
-    int select_status = select(MAX_CLIENTS, &current_sockets, NULL, NULL, &tv);
+    write_socket = read_socket;
+    int select_status =
+        select(MAX_CLIENTS, &read_socket, &write_socket, NULL, &tv);
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+      if (client_socket_list[i] != 0) {
+        FD_SET(client_socket_list[i], &read_socket);
+      }
+    }
     if (select_status < 0) {
       perror("Error With Selecting");
     } else if (select_status != 0) {
-      if (FD_ISSET(sockfd, &current_sockets)) {
+      if (FD_ISSET(sockfd, &read_socket)) {
         newClientConnection(client_socket_list, sockfd);
       } else {
-        handleData(client_socket_list, &current_sockets);
+        handleData(client_socket_list, &read_socket, &write_socket);
       }
     }
   }
