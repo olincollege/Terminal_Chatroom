@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include "chat_utilities.c"
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -10,15 +11,28 @@
 #include <unistd.h>
 #define PORT 8080
 
-int main() {
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
+void check_socket_creation(int sockfd) {
   if (sockfd < 0) {
     perror("Socket Creation Failed");
     exit(EXIT_FAILURE);
   } else {
     perror("Socket Creation Succeeded");
   }
+}
+
+void check_connection_status(int connection_status) {
+  if (connection_status != 0) {
+    perror("Connection Failed");
+    exit(EXIT_FAILURE);
+  } else {
+    perror("Connection Succeeded");
+  }
+}
+
+int main() {
+  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+  // check_socket_creation(sockfd);
 
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
@@ -28,12 +42,15 @@ int main() {
   int connection_status = connect(sockfd, (struct sockaddr *)&server_address,
                                   sizeof(server_address));
 
-  if (connection_status != 0) {
-    perror("Connection Failed");
-    exit(EXIT_FAILURE);
-  } else {
-    perror("Connection Succeeded");
-  }
+  // check_connection_status(connection_status);
+
+  char username[USERNAME_BUFFER_SIZE + 1];
+  get_username(username);
+
+  char packet[100];
+  char message[7] = "Hello!";
+  create_packet(packet, username, message);
+  printf("%s", packet);
 
   char buffer[1024];
   fd_set read_fd, write_fd;
