@@ -29,10 +29,41 @@ void check_connection_status(int connection_status) {
   }
 }
 
+void read_buffer(char* buffer) {
+  printf("\033[A");
+  if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
+    buffer[strlen(buffer) - 1] = '\0';
+  }
+}
+
+void write_to_server(int sockfd, char* packet, fd_set read_fd) {
+  if (write(sockfd, packet, strlen(packet)) == -1) {
+    perror("Write Failed");
+    exit(EXIT_FAILURE);
+  } else {
+    FD_CLR(STDIN_FILENO, &read_fd);
+  }
+}
+
+int read_from_server(int packet_received, char* buffer) {
+  if (packet_received == -1) {
+    perror("Receive Failed");
+    exit(EXIT_FAILURE);
+  } else if (packet_received == 0) {
+    printf("Connection Closed\n");
+    return 1;
+  } else {
+    buffer[packet_received] = '\0';
+    printf("%s\n", buffer);
+    return 0;
+  }
+}
+
+
 int main() {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-  // check_socket_creation(sockfd);
+  check_socket_creation(sockfd);
 
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
@@ -42,17 +73,13 @@ int main() {
   int connection_status = connect(sockfd, (struct sockaddr *)&server_address,
                                   sizeof(server_address));
 
-  // check_connection_status(connection_status);
+  check_connection_status(connection_status);
 
   char username[USERNAME_BUFFER_SIZE + 1];
   get_username(username);
 
-  char packet[100];
-  char message[7] = "Hello!";
-  create_packet(packet, username, message);
-  printf("%s", packet);
-
   char buffer[1024];
+  char packet[1024];
   fd_set read_fd, write_fd;
   FD_ZERO(&read_fd);
   FD_ZERO(&write_fd);
@@ -70,44 +97,19 @@ int main() {
       perror("Error With Selecting");
     }
 
-    if (FD_ISSET(sockfd, &temp_write)) {
-      fgets(buffer, sizeof(buffer), stdin);
-      if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
-        buffer[strlen(buffer) - 1] = '\0';
-      }
-      if (write(sockfd, buffer, strlen(buffer)) == -1) {
-        perror("Write Failed");
-        exit(EXIT_FAILURE);
-      } else {
-        FD_CLR(sockfd, &write_fd);
-      }
-    }
     if (FD_ISSET(sockfd, &temp_read)) {
-      int bytes_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
-      if (bytes_received == -1) {
-        perror("Receive Failed");
-        exit(EXIT_FAILURE);
-      } else if (bytes_received == 0) {
-        printf("Connection Closed\n");
+      int packet_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
+      if (read_from_server(packet_received, buffer)) {
         break;
-      } else {
-        buffer[bytes_received] = '\0';
-        printf("%s\n", buffer);
-      }
+      };
       FD_SET(sockfd, &read_fd);
     }
 
     if (FD_ISSET(STDIN_FILENO, &temp_read)) {
       fgets(buffer, sizeof(buffer), stdin);
-      if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
-        buffer[strlen(buffer) - 1] = '\0';
-      }
-      if (write(sockfd, buffer, strlen(buffer)) == -1) {
-        perror("Write Failed");
-        exit(EXIT_FAILURE);
-      } else {
-        FD_CLR(STDIN_FILENO, &read_fd);
-      }
+      read_buffer(buffer);
+      create_packet(packet, username, buffer);
+      write_to_server(sockfd, packet, read_fd);
     }
 
     FD_SET(sockfd, &read_fd);

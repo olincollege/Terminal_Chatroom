@@ -18,6 +18,7 @@ void get_timestamp(char* timestamp) {
 }
 
 void create_packet(char* packet, char* username, char* message) {
+    strncpy(packet, "", sizeof(packet));
     strcat(packet, username);
     strcat(packet, " (");
     char timestamp[TIMESTAMP_BUFFER_SIZE + 1];
@@ -25,5 +26,4 @@ void create_packet(char* packet, char* username, char* message) {
     strcat(packet, timestamp);
     strcat(packet, "): ");
     strcat(packet, message);
-
 }

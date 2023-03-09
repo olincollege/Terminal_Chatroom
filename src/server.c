@@ -14,7 +14,7 @@ void broadcastData(int senderIdx, int client_socket_list[MAX_CLIENTS],
                    char buffer[MAX_MESSAGE_LENGTH]) {
   char bufferEmpty[MAX_MESSAGE_LENGTH];
   for (int i = 0; i < MAX_CLIENTS; i++) {
-    if (i != senderIdx && client_socket_list[i] != 0) {
+    if (client_socket_list[i] != 0) {
       write(client_socket_list[i], buffer, strlen(buffer));
     }
   }
