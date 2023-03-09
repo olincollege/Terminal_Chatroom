@@ -14,9 +14,11 @@
  * Checks if the socket was created successfully, throws an error if not.
  *
  * @param sockfd An integer representing the socket the client is connected to.
+ * @return 
  */
-void check_socket_creation(int sockfd);
+int check_socket_creation(int sockfd);
 
+int hello();
 /**
  * Checks if a connection was made to the server successfully, throws an
  * error if not.

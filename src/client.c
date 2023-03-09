@@ -11,13 +11,17 @@
 #include <unistd.h>
 #define PORT 8080
 
-void check_socket_creation(int sockfd) {
+int check_socket_creation(int sockfd) {
   if (sockfd < 0) {
     perror("Socket Creation Failed");
-    exit(EXIT_FAILURE);
-  } else {
-    perror("Socket Creation Succeeded");
+    return 1;
   }
+  printf("Socket Creation Succeeded\n");
+  return 0;
+}
+
+int hello() {
+  return 1;
 }
 
 void check_connection_status(int connection_status) {
@@ -25,7 +29,7 @@ void check_connection_status(int connection_status) {
     perror("Connection Failed");
     exit(EXIT_FAILURE);
   } else {
-    perror("Connection Succeeded");
+    printf("Connection Succeeded\n");
   }
 }
 
@@ -61,9 +65,11 @@ int read_from_server(int packet_received, char* buffer) {
 
 
 int main() {
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-  check_socket_creation(sockfd);
+  // int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  int sockfd = -1;
+  if (check_socket_creation(sockfd)) {
+    return 0;
+  };
 
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
@@ -116,6 +122,6 @@ int main() {
     FD_SET(STDIN_FILENO, &read_fd);
   }
 
-  close(sockfd);
+  // close(sockfd);
   return 0;
 }
