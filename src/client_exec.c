@@ -10,7 +10,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#define PORT 8080
 
 int main() {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);

@@ -8,9 +8,11 @@
 #include <string.h>
 #include <sys/socket.h>
 
-#define PORT 8080
-#define MAX_CLIENTS 5
-#define MAX_MESSAGE_LENGTH 1024
+typedef enum {
+  PORT = 8080,
+  MAX_MESSAGE_LENGTH = 1024,
+  MAX_CLIENTS = 5
+} Constants;
 
 // Functions
 
@@ -79,7 +81,7 @@ int setup_server_socket();
  *
  * @param bind_status: An int that's < 0 if the bind failed.
  * @param listen_status: An int that's < 0 if the listen failed.
- * 
+ *
  * @return An integer representing the status of the listening process.
  *         0 means a good connection, 1 means a bad binding to the socket,
  *         and 2 means a bad listening.

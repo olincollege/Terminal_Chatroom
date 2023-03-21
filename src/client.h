@@ -12,6 +12,8 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+typedef enum { PORT = 8080 } Constants;
 /**
  * Checks if the socket was created successfully, throws an error if not.
  *

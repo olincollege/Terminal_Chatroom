@@ -9,7 +9,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#define PORT 8080
 
 int check_socket_creation(int sockfd) {
   if (sockfd < 0) {
