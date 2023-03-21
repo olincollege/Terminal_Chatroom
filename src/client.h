@@ -24,7 +24,7 @@ int check_socket_creation(int sockfd);
  *
  * @param connection_status An integer representing the connection status.
  */
-void check_connection_status(int connection_status);
+int check_connection_status(int connection_status);
 
 /**
  * Reads the stdin buffer and clears the line the user types after enter is
