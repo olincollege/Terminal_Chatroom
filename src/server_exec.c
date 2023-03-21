@@ -28,7 +28,12 @@ int main() {
   int bind_status = bind(server_socket, (struct sockaddr *)&server_address,
                          sizeof(server_address));
   int listen_status = listen(server_socket, MAX_CLIENTS);
-  check_socket_bind_listen(bind_status, listen_status);
+
+  if (check_socket_bind_listen(bind_status, listen_status) == 1) {
+    return 1;
+  } else if (check_socket_bind_listen(bind_status, listen_status) == 2) {
+    return 1;
+  }
 
   // Main loop
   while (1) {

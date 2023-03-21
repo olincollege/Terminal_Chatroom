@@ -96,15 +96,16 @@ int setup_server_socket() {
   return server_socket;
 }
 
-void check_socket_bind_listen(int bind_status, int listen_status) {
+int check_socket_bind_listen(int bind_status, int listen_status) {
   if (bind_status < 0) {
-    perror("Unable to Bind Socket");
-    exit(EXIT_FAILURE);
+    printf("Unable to Bind Socket\n");
+    return 1;
   }
   if (listen_status < 0) {
-    perror("Unable to Listen");
-    exit(EXIT_FAILURE);
+    printf("Unable to Listen\n");
+    return 2;
   }
+  return 0;
 }
 
 void refresh_sockets(fd_set *read_socket, fd_set *write_socket,

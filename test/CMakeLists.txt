@@ -20,22 +20,12 @@ add_test(
   COMMAND test_chat_utilities ${CRITERION_FLAGS}
 )
 
-# add_executable(test_greet test_greet.c)
-# target_link_libraries(test_greet
-#   PRIVATE greet
-#   PUBLIC ${CRITERION}
-# )
-# add_test(
-#   NAME test_greet
-#   COMMAND test_greet ${CRITERION_FLAGS}
-# )
-
-# add_executable(test_paths test_paths.c)
-# target_link_libraries(test_paths
-#   PRIVATE paths
-#   PUBLIC ${CRITERION}
-# )
-# add_test(
-#   NAME test_paths
-#   COMMAND test_paths ${CRITERION_FLAGS}
-# )
+add_executable(test_server test_server.c)
+target_link_libraries(test_server
+  PRIVATE server
+  PUBLIC ${CRITERION}
+)
+add_test(
+  NAME test_server
+  COMMAND test_server ${CRITERION_FLAGS}
+)
