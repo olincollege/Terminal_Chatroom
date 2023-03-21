@@ -39,8 +39,8 @@ Test(get_username, truncates_username) {
 Test(get_timestamp, proper_timestamp_format) {
   char timestamp[TIMESTAMP_BUFFER_SIZE + 1];
   get_timestamp(timestamp);
-  cr_assert(eq(str, timestamp[2], ":"));
-  cr_assert(eq(str, timestamp[5], ":"));
+  cr_assert(eq(chr, timestamp[2], ':'));
+  cr_assert(eq(chr, timestamp[5], ':'));
 }
 
 // Check if create packet concatenates message meta data

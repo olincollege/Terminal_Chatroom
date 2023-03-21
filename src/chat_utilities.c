@@ -8,13 +8,11 @@
 void get_username(char* username) {
     printf("Enter a username: ");
     fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
-    // FIX THIS
-    if (username == "") {
-        strncpy(username, "hello", sizeof(username));
+    if (username[0] == '\n') {
+        strncpy(username, "Anon", USERNAME_BUFFER_SIZE + 1);
     } else {
         username[strcspn(username, "\n")] = 0;
     }
-    
 }
 
 void get_timestamp(char* timestamp) {
