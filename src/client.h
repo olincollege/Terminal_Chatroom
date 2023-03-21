@@ -65,6 +65,6 @@ void write_to_server(int sockfd, char* packet, fd_set read_fd);
  *                        or the length of the buffer.
  * @param buffer The buffer that contains the packet data from the server.
  */
-void read_from_server(int packet_received, char* buffer);
+int read_from_server(int packet_received, char* buffer);
 
 #endif

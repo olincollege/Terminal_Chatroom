@@ -40,11 +40,26 @@ Test(get_timestamp, proper_timestamp_format) {
   char timestamp[TIMESTAMP_BUFFER_SIZE + 1];
   get_timestamp(timestamp);
   cr_assert(eq(str, timestamp[2], ":"));
+  cr_assert(eq(str, timestamp[5], ":"));
 }
 
-// // Check that a bad socket is rejected.
-// Test(check_socket_creation, hi) {
-//   int sockfd = 1;
-//   cr_assert(eq(int, sockfd, 0));
-//   // cr_assert(eq(int, check_socket_creation(sockfd), 0));
-// }
+// Check if create packet concatenates message meta data
+// correctly.
+Test(create_packet, creates_packet_message) {
+  char* packet;
+  char* username = "Mac";
+  char* message = "Hi!";
+  create_packet(packet, username, message);
+  cr_assert(eq(str, packet[0], "M"));
+  cr_assert(eq(str, packet[1], "a"));
+  cr_assert(eq(str, packet[2], "c"));
+  cr_assert(eq(str, packet[3], " "));
+  cr_assert(eq(str, packet[4], "("));
+  cr_assert(eq(str, packet[7], ":"));
+  cr_assert(eq(str, packet[10], ":"));
+  cr_assert(eq(str, packet[13], ")"));
+  cr_assert(eq(str, packet[14], " "));
+  cr_assert(eq(str, packet[15], "H"));
+  cr_assert(eq(str, packet[16], "i"));
+  cr_assert(eq(str, packet[17], "!"));
+}
