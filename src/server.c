@@ -1,16 +1,12 @@
 #include <fcntl.h>
 #include <netinet/in.h>
+#include <server.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <unistd.h>
-
-// Define globals
-#define PORT 8080
-#define MAX_CLIENTS 5
-#define MAX_MESSAGE_LENGTH 1024
 
 // Function to send messages to all clients
 void broadcast_data(int client_socket_list[MAX_CLIENTS],
