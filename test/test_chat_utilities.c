@@ -46,20 +46,21 @@ Test(get_timestamp, proper_timestamp_format) {
 // Check if create packet concatenates message meta data
 // correctly.
 Test(create_packet, creates_packet_message) {
-  char* packet;
-  char* username = "Mac";
-  char* message = "Hi!";
-  create_packet(packet, username, message);
-  cr_assert(eq(str, packet[0], "M"));
-  cr_assert(eq(str, packet[1], "a"));
-  cr_assert(eq(str, packet[2], "c"));
-  cr_assert(eq(str, packet[3], " "));
-  cr_assert(eq(str, packet[4], "("));
-  cr_assert(eq(str, packet[7], ":"));
-  cr_assert(eq(str, packet[10], ":"));
-  cr_assert(eq(str, packet[13], ")"));
-  cr_assert(eq(str, packet[14], " "));
-  cr_assert(eq(str, packet[15], "H"));
-  cr_assert(eq(str, packet[16], "i"));
-  cr_assert(eq(str, packet[17], "!"));
+  char packet[1024] = "";
+  char username[USERNAME_BUFFER_SIZE + 1] = "Mac";
+  char message[1024] = "Hi!";
+  create_packet(&packet[0], &username[0], &message[0]);
+  cr_assert(eq(chr, packet[0], 'M'));
+  cr_assert(eq(chr, packet[1], 'a'));
+  cr_assert(eq(chr, packet[2], 'c'));
+  cr_assert(eq(chr, packet[3], ' '));
+  cr_assert(eq(chr, packet[4], '('));
+  cr_assert(eq(chr, packet[7], ':'));
+  cr_assert(eq(chr, packet[10], ':'));
+  cr_assert(eq(chr, packet[13], ')'));
+  cr_assert(eq(chr, packet[14], ':'));
+  cr_assert(eq(chr, packet[15], ' '));
+  cr_assert(eq(chr, packet[16], 'H'));
+  cr_assert(eq(chr, packet[17], 'i'));
+  cr_assert(eq(chr, packet[18], '!'));
 }

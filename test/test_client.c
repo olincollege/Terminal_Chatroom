@@ -86,9 +86,9 @@ Test(read_from_server, closed_connection, .init = redirect_all_std) {
 
 // Check that read from server prints the buffer from the packet.
 Test(read_from_server, prints_packet_message, .init = redirect_all_std) {
-  char* buffer = "Hello everyone!";
-  int packet_received = 0;
-  cr_assert(eq(int, read_from_server(packet_received, buffer), 0));
+  char buffer[7] = "Hello!";
+  int packet_received = 7;
+  cr_assert(eq(int, read_from_server(packet_received, &buffer), 0));
   (void) fflush(stdout);
-  cr_assert_stdout_eq_str("Hello everyone!\n");
+  cr_assert_stdout_eq_str("Hello!\n");
 }
