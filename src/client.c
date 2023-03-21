@@ -29,6 +29,8 @@ int check_connection_status(int connection_status) {
 }
 
 void read_buffer(char *buffer) {
+  // This string clears what the user just typed to prevent two messages
+  // on the user's terminal.
   printf("\033[A");
   if (strlen(buffer) > 0 && buffer[strlen(buffer) - 1] == '\n') {
     buffer[strlen(buffer) - 1] = '\0';
@@ -51,6 +53,8 @@ int read_from_server(int packet_received, char *buffer) {
     printf("Connection Closed\n");
     return 1;
   } else {
+    // Set a terminating character to the end of the buffer that
+    // we received.
     buffer[packet_received] = '\0';
     printf("%s\n", buffer);
     return 0;

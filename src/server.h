@@ -55,7 +55,7 @@ void handle_receive(int client_socket_list[MAX_CLIENTS], fd_set *read_socket,
  *
  **/
 void check_read_sockets(int client_socket_list[MAX_CLIENTS],
-                        fd_set *read_socket, fd_set *write_socket);
+                        fd_set *read_socket, char *write_socket);
 
 /**
  * Add new connected client to clients list and check if connection was

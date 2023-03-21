@@ -3,8 +3,9 @@
 // Set the maximum input size that shout can read.
 enum { 
     USERNAME_BUFFER_SIZE = 16,
-    TIMESTAMP_BUFFER_SIZE = 8
-    };
+    TIMESTAMP_BUFFER_SIZE = 8,
+    PACKET_BUFFER_SIZE = 1024
+};
 
 /**
  * Gets the current time and formats it in hh:mm:ss format and saves it in

@@ -22,7 +22,7 @@ void broadcast_data(int client_socket_list[MAX_CLIENTS],
 void handle_receive(int client_socket_list[MAX_CLIENTS],
                     char buffer[MAX_MESSAGE_LENGTH], int current_client) {
   // number of bytes received; 0=client disconnect, <0=error, >0=message
-  int bytes_received = recv(client_socket_list[current_client], buffer,
+  int bytes_received = (int) recv(client_socket_list[current_client], buffer,
                             MAX_MESSAGE_LENGTH * 4, 0);
   // if client is sending a message
   if (bytes_received > 0) {
