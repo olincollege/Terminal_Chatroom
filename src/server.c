@@ -17,8 +17,7 @@ void broadcast_data(int senderIdx, int client_socket_list[MAX_CLIENTS],
                    char buffer[MAX_MESSAGE_LENGTH]) {
   // loop through all connected clients
   for (int i = 0; i < MAX_CLIENTS; i++) {
-    // write to client socket if it's not the one that sent the message
-    if (i != senderIdx && client_socket_list[i] != 0) {
+    if (client_socket_list[i] != 0) {
       write(client_socket_list[i], buffer, strlen(buffer));
     }
   }
