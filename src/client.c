@@ -47,6 +47,7 @@ void write_to_server(int sockfd, char* packet, fd_set read_fd) {
 int read_from_server(int packet_received, char* buffer) {
   if (packet_received == -1) {
     printf("Receive Failed\n");
+    return 0;
   } else if (packet_received == 0) {
     printf("Connection Closed\n");
     return 1;

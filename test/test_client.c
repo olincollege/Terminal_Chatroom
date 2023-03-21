@@ -69,22 +69,26 @@ Test(read_buffer, clears_unformatted_message, .init = redirect_all_std) {
 Test(read_from_server, invalid_packet, .init = redirect_all_std) {
   char* buffer = "Hello everyone!";
   int packet_received = -1;
-  read_from_server(packet_received, buffer);
+  cr_assert(eq(int, read_from_server(packet_received, buffer), 0));
   (void) fflush(stdout);
   cr_assert_stdout_eq_str("Receive Failed\n");
 }
 
-// Check that a packet indicated 
+// Check that a packet indicating a closed connection returns correctly and
+// prints a connection closed message.
 Test(read_from_server, closed_connection, .init = redirect_all_std) {
   char* buffer = "Hello everyone!";
-  read_buffer(buffer);
+  int packet_received = 0;
+  cr_assert(eq(int, read_from_server(packet_received, buffer), 1));
   (void) fflush(stdout);
-  cr_assert_stdout_eq_str("\033[A");
+  cr_assert_stdout_eq_str("Connection Closed\n");
 }
 
-// Test(read_from_server, prints_packet_message, .init = redirect_all_std) {
-//   char* buffer = "Hello everyone!";
-//   read_buffer(buffer);
-//   (void) fflush(stdout);
-//   cr_assert_stdout_eq_str("\033[A");
-// }
+// Check that read from server prints the buffer from the packet.
+Test(read_from_server, prints_packet_message, .init = redirect_all_std) {
+  char buffer[7] = "Hello!";
+  int packet_received = 7;
+  cr_assert(eq(int, read_from_server(packet_received, &buffer), 0));
+  (void) fflush(stdout);
+  cr_assert_stdout_eq_str("Hello!\n");
+}
