@@ -18,7 +18,6 @@
  */
 int check_socket_creation(int sockfd);
 
-int hello();
 /**
  * Checks if a connection was made to the server successfully, throws an
  * error if not.
