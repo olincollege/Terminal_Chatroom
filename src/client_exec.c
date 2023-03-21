@@ -21,13 +21,19 @@ int main() {
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
   server_address.sin_port = htons(PORT);
+  // COMMENT OUT THE BELOW LINE TO CONNECT TO A REMOTE SERVER
   server_address.sin_addr.s_addr = INADDR_ANY;
-
+  // UNCOMMENT THE BELOW LINE TO CONNECT TO A REMOTE SERVER AND PUT THE IP
+  // ADDRESS IN THE SPECIFIED PLACE
+  // server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
   int connection_status = connect(sockfd, (struct sockaddr *)&server_address,
                                   sizeof(server_address));
 
-  check_connection_status(connection_status);
-
+  connection_status = check_connection_status(connection_status);
+  if (connection_status == 1) {
+    printf("Error: Unable to Connect");
+    exit(EXIT_FAILURE);
+  }
   char username[USERNAME_BUFFER_SIZE + 1];
   get_username(username);
 
