@@ -14,7 +14,7 @@
 
 // Function to send messages to all clients
 void broadcast_data(int client_socket_list[MAX_CLIENTS],
-                   char buffer[MAX_MESSAGE_LENGTH]) {
+                    char buffer[MAX_MESSAGE_LENGTH]) {
   // loop through all connected clients
   for (int current_client = 0; current_client < MAX_CLIENTS; current_client++) {
     if (client_socket_list[current_client] != 0) {
@@ -23,26 +23,29 @@ void broadcast_data(int client_socket_list[MAX_CLIENTS],
   }
 }
 
-void handle_receive(int client_socket_list[MAX_CLIENTS], char buffer[MAX_MESSAGE_LENGTH], int current_client) {
+void handle_receive(int client_socket_list[MAX_CLIENTS],
+                    char buffer[MAX_MESSAGE_LENGTH], int current_client) {
   // number of bytes received; 0=client disconnect, <0=error, >0=message
-  int bytes_received = recv(client_socket_list[current_client], buffer, sizeof(char) * strlen(buffer), 0);
+  int bytes_received = recv(client_socket_list[current_client], buffer,
+                            sizeof(char) * strlen(buffer), 0);
   // if client is sending a message
   if (bytes_received > 0) {
     buffer[bytes_received] = '\0';
     printf("%s \n", buffer);
     broadcast_data(client_socket_list, buffer);
-  // if a client has disconnected
+    // if a client has disconnected
   } else if (bytes_received == 0) {
     printf("Client %d disconnected\n", client_socket_list[current_client]);
     close(client_socket_list[current_client]);
     client_socket_list[current_client] = 0;
-  // if data read indicates an error
+    // if data read indicates an error
   } else {
     perror("Receiving Failure");
   }
 }
 
-void check_read_sockets(int client_socket_list[MAX_CLIENTS], fd_set *read_socket, char buffer[MAX_MESSAGE_LENGTH]) {
+void check_read_sockets(int client_socket_list[MAX_CLIENTS],
+                        fd_set *read_socket, char buffer[MAX_MESSAGE_LENGTH]) {
   // loop through all connected clients
   for (int i = 0; i < MAX_CLIENTS; i++) {
     // if client exists and data is ready to be read from client socket
@@ -56,7 +59,7 @@ void check_read_sockets(int client_socket_list[MAX_CLIENTS], fd_set *read_socket
 }
 
 int new_client_connection(int client_socket_list[MAX_CLIENTS],
-                        int server_socket) {
+                          int server_socket) {
   // variable that stores status of connected client
   int client = accept(server_socket, NULL, NULL);
   if (client < 0) {
@@ -104,16 +107,16 @@ void check_socket_bind_listen(int bind_status, int listen_status) {
   }
 }
 
-void refresh_sockets(fd_set read_socket, fd_set write_socket,
-                    int server_socket, int client_socket_list[MAX_CLIENTS]) {
-  FD_ZERO(&read_socket);
-  FD_SET(server_socket, &read_socket);
-  FD_ZERO(&write_socket);
-  FD_SET(server_socket, &write_socket);
+void refresh_sockets(fd_set *read_socket, fd_set *write_socket,
+                     int server_socket, int client_socket_list[MAX_CLIENTS]) {
+  FD_ZERO(read_socket);
+  FD_SET(server_socket, read_socket);
+  FD_ZERO(write_socket);
+  FD_SET(server_socket, write_socket);
   for (int i = 0; i < MAX_CLIENTS; i++) {
     if (client_socket_list[i] != 0) {
-      FD_SET(client_socket_list[i], &read_socket);
-      FD_SET(client_socket_list[i], &write_socket);
+      FD_SET(client_socket_list[i], read_socket);
+      FD_SET(client_socket_list[i], write_socket);
     }
   }
 }
@@ -144,7 +147,8 @@ int main() {
   while (1) {
     tv.tv_sec = 0;
     tv.tv_usec = 10000;
-    refresh_sockets(read_socket, write_socket, server_socket, client_socket_list);
+    refresh_sockets(&read_socket, &write_socket, server_socket,
+                    client_socket_list);
     // variable that tracks if read or write sockets have pending actions
     int select_status =
         select(FD_SETSIZE, &read_socket, &write_socket, NULL, &tv);
