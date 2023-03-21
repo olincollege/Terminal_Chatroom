@@ -1,4 +1,4 @@
-#include "chat_utilities.c"
+#include "chat_utilities.h"
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netinet/in.h>
