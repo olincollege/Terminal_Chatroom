@@ -1,6 +1,6 @@
+#include "server.h"
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <server.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,8 +22,8 @@ void broadcast_data(int client_socket_list[MAX_CLIENTS],
 void handle_receive(int client_socket_list[MAX_CLIENTS],
                     char buffer[MAX_MESSAGE_LENGTH], int current_client) {
   // number of bytes received; 0=client disconnect, <0=error, >0=message
-  int bytes_received = (int) recv(client_socket_list[current_client], buffer,
-                            (size_t) (MAX_MESSAGE_LENGTH * 4), 0);
+  int bytes_received = (int)recv(client_socket_list[current_client], buffer,
+                                 (size_t)(MAX_MESSAGE_LENGTH * 4), 0);
   // if client is sending a message
   if (bytes_received > 0) {
     buffer[bytes_received] = '\0';

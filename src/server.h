@@ -19,13 +19,11 @@ typedef enum {
 /**
  * Send a received message to all connected clients.
  *
- * @param senderIdx: An int representing the client in the client list that sent
- *                   the message.
  * @param client_socket_list: A list of ints which are the connected client
  *                            sockets.
  * @param buffer: a character array that stores the message to be broadcasts.
  **/
-void broadcast_data(int senderIdx, int client_socket_list[MAX_CLIENTS],
+void broadcast_data(int client_socket_list[MAX_CLIENTS],
                     char buffer[MAX_MESSAGE_LENGTH]);
 
 /**
@@ -34,13 +32,11 @@ void broadcast_data(int senderIdx, int client_socket_list[MAX_CLIENTS],
  *
  * @param client_socket_list: A list of ints which are the connected client
  *                            sockets.
- * @param read_socket: An fd_set pointer that points to the socket which the
- *                     server detected had new data.
  * @param buffer: a character array that stores the message to be broadcasts
  * @param current_client: An int representing the client in the client list that
  *                        sent the message.
  **/
-void handle_receive(int client_socket_list[MAX_CLIENTS], fd_set *read_socket,
+void handle_receive(int client_socket_list[MAX_CLIENTS],
                     char buffer[MAX_MESSAGE_LENGTH], int current_client);
 
 /**
@@ -64,9 +60,12 @@ void check_read_sockets(int client_socket_list[MAX_CLIENTS],
  * @param client_socket_list: A list of ints which are the connected client
  *                            sockets.
  * @param server_socket: An int representing the server socket.
+ *
+ * @return An int that represents the client or -1 if the the client connection
+ *fails
  **/
-void new_client_connection(int client_socket_list[MAX_CLIENTS],
-                           int server_socket);
+int new_client_connection(int client_socket_list[MAX_CLIENTS],
+                          int server_socket);
 
 /**
  * Set up the server socket with correct, non-blocking parameters.
