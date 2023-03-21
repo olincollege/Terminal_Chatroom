@@ -33,6 +33,35 @@ make
 
 ### To Run The Server
 
+1. On the device you want to host the server on, go into the build directory and
+   run the following command:
+
+```bash
+./src/server_exec
+```
+
 ### To Run The Client
 
-Get the IP of the Device Running The Server
+### Server and Client on Same Device
+
+In the build directory, run the following command:
+
+```bash
+./src/client_exec
+```
+
+### Client is Connecting Remotely to Server
+
+1. Get the IP of the device hosting the server.
+
+2. In line 24 of `client_exec.c`, follow the instructions for commenting out and
+   uncommenting the specific lines and replace the example IP with the IP of
+   your server.
+
+3. Rebuild the project as explained earlier.
+
+4. In the build directory, run the following command:
+
+```bash
+./src/client_exec
+```
