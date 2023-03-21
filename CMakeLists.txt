@@ -9,11 +9,11 @@ set(CMAKE_C_STANDARD 17)
 
 set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Wshadow -Wconversion -Wunreachable-code")
 set(CMAKE_C_CLANG_TIDY "clang-tidy")
-# set(CMAKE_C_CLANG_TIDY
-#   clang-tidy;
-#   -header-filter=.;
-#   -checks=*,-llvmlibc-restrict-system-libc-headers,-llvm-header-guard,-altera*,-cert-err34-c,-cppcoreguidelines-init-variables;
-# )
+set(CMAKE_C_CLANG_TIDY
+  clang-tidy;
+  -header-filter=.;
+  -checks=*,-llvmlibc-restrict-system-libc-headers,-llvm-header-guard,-altera*,-cert-err34-c,-cppcoreguidelines-init-variables;
+)
 
 add_subdirectory(src)
 

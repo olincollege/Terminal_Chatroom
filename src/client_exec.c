@@ -57,7 +57,7 @@ int main() {
     }
 
     if (FD_ISSET(sockfd, &temp_read)) {
-      int packet_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
+      int packet_received = (int) recv(sockfd, buffer, sizeof(buffer) - 1, 0);
       if (read_from_server(packet_received, buffer)) {
         break;
       };

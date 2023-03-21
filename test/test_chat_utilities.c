@@ -46,9 +46,9 @@ Test(get_timestamp, proper_timestamp_format) {
 // Check if create packet concatenates message meta data
 // correctly.
 Test(create_packet, creates_packet_message) {
-  char packet[1024] = "";
+  char packet[PACKET_BUFFER_SIZE] = "";
   char username[USERNAME_BUFFER_SIZE + 1] = "Mac";
-  char message[1024] = "Hi!";
+  char message[PACKET_BUFFER_SIZE] = "Hi!";
   create_packet(&packet[0], &username[0], &message[0]);
   cr_assert(eq(chr, packet[0], 'M'));
   cr_assert(eq(chr, packet[1], 'a'));
