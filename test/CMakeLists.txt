@@ -10,15 +10,15 @@ add_test(
   COMMAND test_client ${CRITERION_FLAGS}
 )
 
-# add_executable(test_absolute test_absolute.c)
-# target_link_libraries(test_absolute
-#   PRIVATE absolute
-#   PUBLIC ${CRITERION}
-# )
-# add_test(
-#   NAME test_absolute
-#   COMMAND test_absolute ${CRITERION_FLAGS}
-# )
+add_executable(test_chat_utilities test_chat_utilities.c)
+target_link_libraries(test_chat_utilities
+  PRIVATE chat_utilities
+  PUBLIC ${CRITERION}
+)
+add_test(
+  NAME test_chat_utilities
+  COMMAND test_chat_utilities ${CRITERION_FLAGS}
+)
 
 # add_executable(test_greet test_greet.c)
 # target_link_libraries(test_greet

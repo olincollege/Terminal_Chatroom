@@ -55,3 +55,4 @@ Test(check_connection_status, error_message, .init = redirect_all_std) {
 //   cr_assert(eq(int, sockfd, 0));
 //   // cr_assert(eq(int, check_socket_creation(sockfd), 0));
 // }
+

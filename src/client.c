@@ -20,7 +20,7 @@ int check_socket_creation(int sockfd) {
   return 0;
 }
 
-int check_connection_status(int connection_status) {
+void check_connection_status(int connection_status) {
   if (connection_status != 0) {
     printf("Connection Failed\n");
     return 1;
