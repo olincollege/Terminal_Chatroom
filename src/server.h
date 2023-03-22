@@ -11,7 +11,8 @@
 typedef enum {
   PORT = 8080,
   MAX_MESSAGE_LENGTH = 1024,
-  MAX_CLIENTS = 5
+  MAX_CLIENTS = 5,
+  TV_USEC = 10000
 } Constants;
 
 // Functions
@@ -46,12 +47,12 @@ void handle_receive(int client_socket_list[MAX_CLIENTS],
  *                            sockets.
  * @param read_socket: An fd_set pointer that points to the socket which the
  *                     server detected had new data.
- * @param write_socket: An fd_set pointer that points to the socket which the
- *                      server should write new data to.
+ * @param buffer: An fd_set pointer that points to the socket which the
+ *                server should write new data to.
  *
  **/
 void check_read_sockets(int client_socket_list[MAX_CLIENTS],
-                        fd_set *read_socket, char *write_socket);
+                        fd_set *read_socket, char *buffer);
 
 /**
  * Add new connected client to clients list and check if connection was

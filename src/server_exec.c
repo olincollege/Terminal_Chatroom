@@ -11,10 +11,11 @@
 int main() {
   // Initialize vars
   char buffer[MAX_MESSAGE_LENGTH];
-  struct timeval tv;
+  struct timeval time_val;
 
   // Create socket variables
-  fd_set read_socket, write_socket;
+  fd_set read_socket;
+  fd_set write_socket;
   int client_socket_list[MAX_CLIENTS] = {0};
   int server_socket = setup_server_socket();
 
@@ -31,19 +32,20 @@ int main() {
 
   if (check_socket_bind_listen(bind_status, listen_status) == 1) {
     return 1;
-  } else if (check_socket_bind_listen(bind_status, listen_status) == 2) {
+  } 
+  if (check_socket_bind_listen(bind_status, listen_status) == 2) {
     return 1;
   }
 
   // Main loop
   while (1) {
-    tv.tv_sec = 0;
-    tv.tv_usec = 10000;
+    time_val.tv_sec = 0;
+    time_val.tv_usec = TV_USEC;
     refresh_sockets(&read_socket, &write_socket, server_socket,
                     client_socket_list);
     // variable that tracks if read or write sockets have pending actions
     int select_status =
-        select(FD_SETSIZE, &read_socket, &write_socket, NULL, &tv);
+        select(FD_SETSIZE, &read_socket, &write_socket, NULL, &time_val);
     if (select_status < 0) {
       perror("Error With Selecting");
     } else if (select_status != 0) {

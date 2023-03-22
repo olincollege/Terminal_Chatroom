@@ -31,26 +31,27 @@ int main() {
   connection_status = check_connection_status(connection_status);
   if (connection_status == 1) {
     printf("Error: Unable to Connect");
-    exit(EXIT_FAILURE);
+    return 0;
   }
   char username[USERNAME_BUFFER_SIZE + 1];
   get_username(username);
 
-  char buffer[1024];
-  char packet[1024];
-  fd_set read_fd, write_fd;
+  char buffer[PACKET_BUFFER_SIZE];
+  char packet[PACKET_BUFFER_SIZE];
+  fd_set read_fd;
+  fd_set write_fd;
   FD_ZERO(&read_fd);
   FD_ZERO(&write_fd);
   FD_SET(sockfd, &read_fd);
   FD_SET(sockfd, &write_fd);
-  struct timeval tv;
+  struct timeval time_value;
 
   while (1) {
-    tv.tv_sec = 0;
-    tv.tv_usec = 100000;
+    time_value.tv_sec = 0;
+    time_value.tv_usec = TV_USEC;
     fd_set temp_read = read_fd;
     fd_set temp_write = write_fd;
-    int select_status = select(sockfd + 1, &temp_read, &temp_write, NULL, &tv);
+    int select_status = select(sockfd + 1, &temp_read, &temp_write, NULL, &time_value);
     if (select_status < 0) {
       perror("Error With Selecting");
     }
@@ -64,7 +65,7 @@ int main() {
     }
 
     if (FD_ISSET(STDIN_FILENO, &temp_read)) {
-      fgets(buffer, sizeof(buffer), stdin);
+      (void) fgets(buffer, sizeof(buffer), stdin);
       read_buffer(buffer);
       create_packet(packet, username, buffer);
       write_to_server(sockfd, packet, read_fd);

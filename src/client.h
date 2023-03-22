@@ -12,7 +12,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-typedef enum { PORT = 8080 } Constants;
+typedef enum { 
+    PORT = 8080,
+    TV_USEC = 10000
+} Constants;
 /**
  * Checks if the socket was created successfully, throws an error if not.
  *
