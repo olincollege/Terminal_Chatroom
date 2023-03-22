@@ -1,7 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "chat_utilities.c"
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netinet/in.h>

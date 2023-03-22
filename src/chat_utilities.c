@@ -1,13 +1,13 @@
 #include "chat_utilities.h"
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 void get_username(char* username) {
     printf("Enter a username: ");
-    fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
+    (void) fgets(username, USERNAME_BUFFER_SIZE + 1, stdin);
     if (username[0] == '\n') {
         strncpy(username, "Anon", USERNAME_BUFFER_SIZE + 1);
     } else {

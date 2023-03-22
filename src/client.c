@@ -49,14 +49,14 @@ int read_from_server(int packet_received, char *buffer) {
   if (packet_received == -1) {
     printf("Receive Failed\n");
     return 0;
-  } else if (packet_received == 0) {
+  }
+  if (packet_received == 0) {
     printf("Connection Closed\n");
     return 1;
-  } else {
-    // Set a terminating character to the end of the buffer that
-    // we received.
-    buffer[packet_received] = '\0';
-    printf("%s\n", buffer);
-    return 0;
   }
+  // Set a terminating character to the end of the buffer that
+  // we received.
+  buffer[packet_received] = '\0';
+  printf("%s\n", buffer);
+  return 0;
 }
