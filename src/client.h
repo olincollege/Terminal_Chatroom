@@ -12,10 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-typedef enum { 
-    PORT = 8080,
-    TV_USEC = 10000
-} Constants;
+typedef enum { PORT = 8080, TV_USEC = 10000 } Constants;
 /**
  * Checks if the socket was created successfully, throws an error if not.
  *
@@ -62,7 +59,7 @@ void write_to_server(int sockfd, char *packet, fd_set read_fd);
 /**
  * Reads incoming data from the server and prints it to the user's terminal.
  *
- * The packet received contains the status of if the retreival failed or if the
+ * The packet received contains the status of if the retrieval failed or if the
  * connection to the server was lost. If none of these are true, the received
  * packet is used to add a null character to the end of the received string
  * buffer. The buffer contains a string representing the user's username,
