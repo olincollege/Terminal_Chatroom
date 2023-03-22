@@ -19,6 +19,9 @@ int main() {
   int client_socket_list[MAX_CLIENTS] = {0};
   int server_socket = setup_server_socket();
 
+  if (server_socket == -1) {
+    return 1;
+  }
   // Create server address struct
   struct sockaddr_in server_address;
   server_address.sin_family = AF_INET;
@@ -30,10 +33,10 @@ int main() {
                          sizeof(server_address));
   int listen_status = listen(server_socket, MAX_CLIENTS);
 
-  if (check_socket_bind_listen(bind_status, listen_status) == 1) {
+  if (check_bind_status(bind_status)) {
     return 1;
   } 
-  if (check_socket_bind_listen(bind_status, listen_status) == 2) {
+  if (check_listening_status(listen_status)) {
     return 1;
   }
 

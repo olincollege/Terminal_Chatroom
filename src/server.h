@@ -71,22 +71,34 @@ int new_client_connection(int client_socket_list[MAX_CLIENTS],
 /**
  * Set up the server socket with correct, non-blocking parameters.
  *
- * @return: An int storing the socket number of the server socket.
+ * @return: An int storing the socket number of the server socket or -1
+ *          if there is an error;
  **/
 int setup_server_socket();
 
 /**
- * Check that server socket binds and listens properly, sends appropriate errors
+ * Check that server socket binds properly, sends appropriate errors
  * if not.
  *
  * @param bind_status: An int that's < 0 if the bind failed.
+ *
+ * @return An integer representing the status of the listening process.
+ *         0 : Valid binding status.
+ *         1 : Error.
+ **/
+int check_bind_status(int bind_status);
+
+/**
+ * Check that server socket listens properly, sends appropriate errors
+ * if not.
+ *
  * @param listen_status: An int that's < 0 if the listen failed.
  *
  * @return An integer representing the status of the listening process.
- *         0 means a good connection, 1 means a bad binding to the socket,
- *         and 2 means a bad listening.
+ *         0 : Valid listening status.
+ *         1 : Error.
  **/
-int check_socket_bind_listen(int bind_status, int listen_status);
+int check_listening_status(int listen_status);
 
 /**
  * Refresh the read and write sockets to prepare for data.
@@ -100,6 +112,6 @@ int check_socket_bind_listen(int bind_status, int listen_status);
  *                            sockets.
  **/
 void refresh_sockets(fd_set *read_socket, fd_set *write_socket,
-                     int server_socket, int client_socket_list[MAX_CLIENTS]);
+                     int server_socket, const int client_socket_list[MAX_CLIENTS]);
 
 #endif // SERVER_H

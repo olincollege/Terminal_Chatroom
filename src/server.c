@@ -23,7 +23,7 @@ void handle_receive(int client_socket_list[MAX_CLIENTS],
                     char buffer[MAX_MESSAGE_LENGTH], int current_client) {
   // number of bytes received; 0=client disconnect, <0=error, >0=message
   int bytes_received = (int)recv(client_socket_list[current_client], buffer,
-                                 (size_t)(MAX_MESSAGE_LENGTH * 4), 0);
+                                (MAX_MESSAGE_LENGTH * (size_t) 4), 0);
   // if client is sending a message
   if (bytes_received > 0) {
     buffer[bytes_received] = '\0';
@@ -57,6 +57,7 @@ void check_read_sockets(int client_socket_list[MAX_CLIENTS],
 int new_client_connection(int client_socket_list[MAX_CLIENTS],
                           int server_socket) {
   // variable that stores status of connected client
+  // warning suggests accept4 which does not compile with C99
   int client = accept(server_socket, NULL, NULL);
   if (client < 0) {
     perror("Client Connection Failed");
@@ -79,33 +80,36 @@ int setup_server_socket() {
   // socket status for server socket
   int server_socket = socket(AF_INET, SOCK_STREAM, 0);
   if (server_socket < 0) {
-    perror("Socket Creation Failed");
-    exit(EXIT_FAILURE);
-  } else {
-    perror("Socket Creation Succeeded");
+    printf("Socket Creation Failed");
+    return -1;
   }
-  if (fcntl(server_socket, F_SETFL,
-            fcntl(server_socket, F_GETFL) | O_NONBLOCK) < 0) {
-    perror("Server is Blocking");
-    exit(EXIT_FAILURE);
+  printf("Socket Creation Succeeded");
+  if (fcntl(server_socket, F_SETFL, 
+    (fcntl(server_socket, F_GETFL) == 1) || (O_NONBLOCK == 1)) < 0) {
+    printf("Server is Blocking");
+    return -1;
   }
   return server_socket;
 }
 
-int check_socket_bind_listen(int bind_status, int listen_status) {
+int check_bind_status(int bind_status) {
   if (bind_status < 0) {
     printf("Unable to Bind Socket\n");
     return 1;
   }
+  return 0;
+}
+
+int check_listening_status(int listen_status) {
   if (listen_status < 0) {
     printf("Unable to Listen\n");
-    return 2;
+    return 1;
   }
   return 0;
 }
 
 void refresh_sockets(fd_set *read_socket, fd_set *write_socket,
-                     int server_socket, int client_socket_list[MAX_CLIENTS]) {
+                     int server_socket, const int client_socket_list[MAX_CLIENTS]) {
   FD_ZERO(read_socket);
   FD_SET(server_socket, read_socket);
   FD_ZERO(write_socket);
